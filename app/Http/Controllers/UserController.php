@@ -28,7 +28,6 @@ class UserController extends Controller
             ], 401);
         }
     
-        // Use Passport's password grant to issue tokens
         $response = Http::post(config('app.url') . '/oauth/token', [
             'grant_type' => 'password',
             'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
@@ -37,8 +36,8 @@ class UserController extends Controller
             'password' => $request->password,
             'scope' => '',
         ]);
+        info($response);
     
-        // Check if token was issued successfully
         if ($response->successful()) {
             $tokenData = $response->json();
     
@@ -54,7 +53,6 @@ class UserController extends Controller
             ]);
         }
     
-        // Handle token issuance failure
         return response()->json([
             'status' => 'error',
             'message' => 'Failed to issue token',
