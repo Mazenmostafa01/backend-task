@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -28,35 +29,25 @@ class UserController extends Controller
             ], 401);
         }
     
-        $response = Http::post(config('app.url') . '/oauth/token', [
+        $tokenRequest = Request::create('/oauth/token','POST', [
             'grant_type' => 'password',
-            'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
-            'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+            'client_id' =>  env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+            'client_secret' =>env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
             'username' => $request->email,
             'password' => $request->password,
             'scope' => '',
         ]);
-        info($response);
-    
-        if ($response->successful()) {
-            $tokenData = $response->json();
-    
-            return response()->json([
-                'status' => 'success',
-                'user' => $user,
-                'authorisation' => [
-                    'token' => $tokenData['access_token'],
-                    'refresh_token' => $tokenData['refresh_token'],
-                    'type' => 'bearer',
-                    'expires_in' => $tokenData['expires_in'],
-                ],
-            ]);
-        }
-    
+
+        $response = app()->handle($tokenRequest);
+
+        $tokenData = (array)json_decode($response->getContent());
+        $user['access_token'] = $tokenData['access_token'];
+        $user['refresh_token'] = $tokenData['refresh_token'];
+
         return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to issue token',
-        ], 500);
+            'status' => 'success',
+            'user' => $user,
+        ]);
     }
 
 //     public function refresh(Request $request)
