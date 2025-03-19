@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Attachment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateCheck;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 use App\Http\Resources\CategoryResource;
 
@@ -26,18 +27,16 @@ class CategoryController extends Controller
      */
     public function store(ValidateCheck $request)
     {
-
-        $imagePath = $request->image->store('images');
-
-        if($imagePath)
-        {
-            Category::create([
-                'title' => $request->title
-            ])->image()->create(['path' => $imagePath]);
-
-            return response()->json(['messaage'=> 'success']);
-        }
-
+            $imagePath = $request->image->store('images');
+    
+            if($imagePath)
+            {
+                Category::create([
+                    'title' => $request->title
+                ])->image()->create(['path' => $imagePath]);
+    
+                return response()->json(['messaage'=> 'success']);
+            }
         return response()->json(['messaage'=> 'fail']);
     }
 
@@ -54,7 +53,6 @@ class CategoryController extends Controller
      */
     public function update(ValidateCheck $request, Category $categories)
     {
-
         $imagePath = $request->image->store('images');
         
         $categories->update(['title' => $request->title]);
@@ -74,11 +72,12 @@ class CategoryController extends Controller
     public function destroy(Category $categories)
     {
         $categories->image()->delete();
-
+        
         $categories->delete();
-
+        
         return response()->json([
             'message' => 'category deleted'
         ]);
+        return response()->json(['messaage'=> 'delete fail']);
     }
 }
