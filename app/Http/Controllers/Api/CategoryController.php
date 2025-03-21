@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Category;
 use App\Models\Attachment;
+use App\Imports\CategoryImport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateCheck;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\Rules\File;
 use App\Http\Resources\CategoryResource;
 
@@ -79,5 +81,12 @@ class CategoryController extends Controller
             'message' => 'category deleted'
         ]);
         return response()->json(['messaage'=> 'delete fail']);
+    }
+
+    public function import()
+    {
+        Excel::import(new CategoryImport, 'try.xlsx');
+        
+        return response()->json(['message' => 'import sucess']);
     }
 }
