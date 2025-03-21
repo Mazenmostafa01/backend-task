@@ -21,6 +21,7 @@ Route::get('/products', [ProductController::class, 'index']);
 
 Route::middleware(['auth', 'role:admin'])->group(function()
 {
+    Route::post('/import', [CategoryController::class , 'import']);
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::post('/categories/{categories}', [CategoryController::class, 'update']);
     Route::delete('/categories/{categories}', [CategoryController::class, 'destroy']);
