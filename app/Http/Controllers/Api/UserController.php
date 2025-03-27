@@ -13,6 +13,38 @@ use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Post(
+     *      path="/api/login",
+     *      summary="login",
+     *      tags={"login"},  
+     * @OA\RequestBody(
+     *      required=true,
+     *      description="pass credintials",
+     *   @OA\JsonContent(
+     *       required={"email","password"},
+     *       @OA\Property(property="email", type="string", format="email", example="test@gmail.com"),
+     *       @OA\Property(property="password", type="string", format="password", example="password"),
+     *     ),
+     *   ),
+     * @OA\Response(
+     *    response=200,
+     *    description="log in success",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="user found log in success")
+     *        ),
+     *     ),
+     * @OA\Response(
+     *    response=401,
+     *    description="wrong credintials",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="wrong mail or password")
+     *   ),
+     *  ),
+     * )
+     */
+
+
     public function store(Request $request)
     {
         $request->validate([
